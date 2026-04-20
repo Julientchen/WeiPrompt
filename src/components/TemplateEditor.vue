@@ -1,0 +1,147 @@
+<template>
+  <div class="card p-6 mb-8">
+    <div class="flex items-center justify-between mb-6">
+      <h2 class="text-xl font-bold text-gray-900 dark:text-white">
+        {{ editingTemplate.id ? '编辑模板' : '新建模板' }}
+      </h2>
+      <div class="flex space-x-3">
+        <button v-if="editingTemplate.id" @click="$emit('delete', editingTemplate.id)" class="btn-danger">
+          <i class="fas fa-trash mr-1"></i>删除
+        </button>
+        <button @click="$emit('cancel')" class="btn-secondary">取消</button>
+        <button @click="handleSave" class="btn-primary">保存</button>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+      <div>
+        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">模板标题</label>
+        <input v-model="editingTemplate.title" class="input-field" placeholder="输入模板标题">
+      </div>
+      <div>
+        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">分类</label>
+        <select v-model="editingTemplate.category" class="input-field">
+          <option value="writing">内容创作</option>
+          <option value="coding">编程开发</option>
+          <option value="learning">学习辅助</option>
+          <option value="business">商业分析</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="mb-6">
+      <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">模板描述</label>
+      <textarea
+        v-model="editingTemplate.description"
+        class="input-field h-20"
+        placeholder="描述模板的用途和使用场景"
+      ></textarea>
+    </div>
+
+    <div class="mb-6">
+      <div class="flex items-center justify-between mb-4">
+        <h3 class="text-lg font-semibold text-gray-900 dark:text-white">变量定义</h3>
+        <button @click="addVariable" class="btn-secondary text-sm">
+          <i class="fas fa-plus mr-1"></i>添加变量
+        </button>
+      </div>
+
+      <div v-for="(variable, index) in editingTemplate.variables" :key="index" class="card p-4 mb-3">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div>
+            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">变量名</label>
+            <input v-model="variable.name" class="input-field text-sm" placeholder="如：topic">
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">标签</label>
+            <input v-model="variable.label" class="input-field text-sm" placeholder="如：主题">
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">类型</label>
+            <select v-model="variable.type" class="input-field text-sm">
+              <option value="text">文本输入</option>
+              <option value="select">下拉选择</option>
+              <option value="number">数字</option>
+            </select>
+          </div>
+        </div>
+
+        <div v-if="variable.type === 'select'" class="mt-3">
+          <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">选项</label>
+          <div v-for="(option, optIndex) in variable.options" :key="optIndex" class="flex items-center space-x-2 mb-2">
+            <input v-model="option.value" class="input-field text-sm flex-1" placeholder="选项值">
+            <input v-model="option.label" class="input-field text-sm flex-1" placeholder="显示标签">
+            <button @click="removeOption(variable, optIndex)" class="text-red-500 hover:text-red-700">
+              <i class="fas fa-times"></i>
+            </button>
+          </div>
+          <button @click="addOption(variable)" class="btn-secondary text-xs">添加选项</button>
+        </div>
+
+        <div class="flex justify-end mt-3">
+          <button @click="removeVariable(index)" class="text-red-500 hover:text-red-700 text-sm">
+            <i class="fas fa-trash mr-1"></i>删除变量
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+        模板内容（使用 {{变量名}} 格式插入变量）
+      </label>
+      <textarea
+        v-model="editingTemplate.content"
+        class="input-field h-40 font-mono text-sm"
+        placeholder="请输入模板内容，使用 {{变量名}} 的格式插入变量"
+      ></textarea>
+    </div>
+  </div>
+</template>
+
+<script setup>
+import { toRaw } from 'vue'
+
+const props = defineProps({
+  editingTemplate: Object
+})
+
+const emit = defineEmits(['save', 'cancel', 'delete'])
+
+const handleSave = () => {
+  emit('save', toRaw(props.editingTemplate))
+}
+
+const addVariable = () => {
+  if (!props.editingTemplate.variables) {
+    props.editingTemplate.variables = []
+  }
+  props.editingTemplate.variables.push({
+    name: `var${props.editingTemplate.variables.length + 1}`,
+    label: '',
+    type: 'text',
+    options: []
+  })
+}
+
+const removeVariable = (index) => {
+  props.editingTemplate.variables.splice(index, 1)
+}
+
+const addOption = (variable) => {
+  if (!variable.options) {
+    variable.options = []
+  }
+  variable.options.push({ value: '', label: '' })
+}
+
+const removeOption = (variable, index) => {
+  variable.options.splice(index, 1)
+}
+</script>
+
+<style scoped>
+.btn-danger {
+  @apply bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg font-medium transition-all duration-200;
+}
+</style>
