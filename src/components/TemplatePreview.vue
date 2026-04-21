@@ -2,16 +2,18 @@
   <div class="card p-6 mb-8">
     <div class="flex items-center justify-between mb-6">
       <div class="flex items-center space-x-3">
-        <button @click="$emit('back')" class="p-2 rounded-lg text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors" title="返回">
+        <button
+          class="p-2 rounded-lg text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+          title="返回"
+          @click="$emit('back')"
+        >
           <i class="fas fa-arrow-left"></i>
         </button>
         <h2 class="text-xl font-bold text-gray-900 dark:text-white">{{ selectedTemplate.title }}</h2>
       </div>
       <div class="flex space-x-3">
-        <button @click="$emit('edit', selectedTemplate)" class="btn-secondary">编辑</button>
-        <button @click="handleCopy" class="btn-primary">
-          <i class="fas fa-copy mr-2"></i>复制提示词
-        </button>
+        <button class="btn-secondary" @click="$emit('edit', selectedTemplate)">编辑</button>
+        <button class="btn-primary" @click="handleCopy"><i class="fas fa-copy mr-2"></i>复制提示词</button>
       </div>
     </div>
 
@@ -29,13 +31,9 @@
             :type="variable.type"
             class="input-field"
             :placeholder="`请输入${variable.label || variable.name}`"
-          >
+          />
 
-          <select
-            v-else-if="variable.type === 'select'"
-            v-model="variableValues[variable.name]"
-            class="input-field"
-          >
+          <select v-else-if="variable.type === 'select'" v-model="variableValues[variable.name]" class="input-field">
             <option value="">请选择</option>
             <option v-for="option in variable.options" :key="option.value" :value="option.value">
               {{ option.label }}
@@ -70,7 +68,7 @@ const generatedPrompt = computed(() => {
 
   let prompt = props.selectedTemplate.content
 
-  Object.keys(variableValues.value).forEach(key => {
+  Object.keys(variableValues.value).forEach((key) => {
     const value = variableValues.value[key] || ''
     const regex = new RegExp(`{{${key}}}`, 'g')
     prompt = prompt.replace(regex, value)
@@ -79,14 +77,18 @@ const generatedPrompt = computed(() => {
   return prompt
 })
 
-watch(() => props.selectedTemplate, (template) => {
-  variableValues.value = {}
-  if (template && template.variables) {
-    template.variables.forEach(variable => {
-      variableValues.value[variable.name] = ''
-    })
-  }
-}, { immediate: true })
+watch(
+  () => props.selectedTemplate,
+  (template) => {
+    variableValues.value = {}
+    if (template && template.variables) {
+      template.variables.forEach((variable) => {
+        variableValues.value[variable.name] = ''
+      })
+    }
+  },
+  { immediate: true }
+)
 
 const handleCopy = () => {
   emit('copy', generatedPrompt.value)

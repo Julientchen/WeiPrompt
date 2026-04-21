@@ -4,7 +4,8 @@ export const DEFAULT_TEMPLATES = [
     title: '文章大纲生成器',
     description: '根据主题自动生成文章大纲结构',
     category: 'writing',
-    content: '请为"{{topic}}"这个主题生成一个详细的文章大纲，要求：\n1. 包含引言、正文、结论三部分\n2. 正文部分至少包含3个主要论点\n3. 每个论点下要有2-3个支持点\n4. 大纲要逻辑清晰，层次分明\n5. 适合{{audience}}阅读',
+    content:
+      '请为"{{topic}}"这个主题生成一个详细的文章大纲，要求：\n1. 包含引言、正文、结论三部分\n2. 正文部分至少包含3个主要论点\n3. 每个论点下要有2-3个支持点\n4. 大纲要逻辑清晰，层次分明\n5. 适合{{audience}}阅读',
     variables: [
       { name: 'topic', label: '文章主题', type: 'text' },
       {
@@ -28,7 +29,8 @@ export const DEFAULT_TEMPLATES = [
     title: '创意写作助手',
     description: '激发创意灵感，辅助故事创作',
     category: 'writing',
-    content: '请基于以下元素创作一个{{genre}}故事：\n\n主题：{{theme}}\n主角：{{protagonist}}\n冲突：{{conflict}}\n\n要求：\n1. 故事要有起承转合\n2. 人物形象鲜明\n3. 情节引人入胜\n4. 字数约{{wordCount}}字',
+    content:
+      '请基于以下元素创作一个{{genre}}故事：\n\n主题：{{theme}}\n主角：{{protagonist}}\n冲突：{{conflict}}\n\n要求：\n1. 故事要有起承转合\n2. 人物形象鲜明\n3. 情节引人入胜\n4. 字数约{{wordCount}}字',
     variables: [
       {
         name: 'genre',
@@ -66,7 +68,8 @@ export const DEFAULT_TEMPLATES = [
     title: '营销文案优化',
     description: '优化营销文案，提升转化率',
     category: 'writing',
-    content: '请优化以下营销文案，使其更具吸引力和转化力：\n\n产品：{{product}}\n目标客户：{{target}}\n核心卖点：{{sellingPoint}}\n\n原文案：{{originalText}}\n\n优化要求：\n1. 突出产品价值\n2. 激发购买欲望\n3. 适合{{platform}}平台发布\n4. 保持简洁有力',
+    content:
+      '请优化以下营销文案，使其更具吸引力和转化力：\n\n产品：{{product}}\n目标客户：{{target}}\n核心卖点：{{sellingPoint}}\n\n原文案：{{originalText}}\n\n优化要求：\n1. 突出产品价值\n2. 激发购买欲望\n3. 适合{{platform}}平台发布\n4. 保持简洁有力',
     variables: [
       { name: 'product', label: '产品名称', type: 'text' },
       { name: 'target', label: '目标客户', type: 'text' },
@@ -94,7 +97,8 @@ export const DEFAULT_TEMPLATES = [
     title: '代码审查助手',
     description: '帮助审查代码质量，提供改进建议',
     category: 'coding',
-    content: '请帮我审查以下{{language}}代码的质量，重点关注：\n1. 代码规范性和可读性\n2. 潜在的性能问题\n3. 安全漏洞\n4. 最佳实践遵循情况\n5. {{specificFocus}}方面的优化\n\n代码：{{code}}\n\n请提供具体的改进建议。',
+    content:
+      '请帮我审查以下{{language}}代码的质量，重点关注：\n1. 代码规范性和可读性\n2. 潜在的性能问题\n3. 安全漏洞\n4. 最佳实践遵循情况\n5. {{specificFocus}}方面的优化\n\n代码：{{code}}\n\n请提供具体的改进建议。',
     variables: [
       {
         name: 'language',
@@ -120,7 +124,8 @@ export const DEFAULT_TEMPLATES = [
     title: 'API文档生成',
     description: '根据代码生成API接口文档',
     category: 'coding',
-    content: '请为以下{{language}}代码生成API文档：\n\n接口功能：{{function}}\n请求方法：{{method}}\n参数说明：{{parameters}}\n返回格式：{{responseFormat}}\n\n代码：{{code}}\n\n文档要求：\n1. 包含接口说明、参数说明、返回值说明\n2. 提供使用示例\n3. 错误码说明\n4. 版本信息',
+    content:
+      '请为以下{{language}}代码生成API文档：\n\n接口功能：{{function}}\n请求方法：{{method}}\n参数说明：{{parameters}}\n返回格式：{{responseFormat}}\n\n代码：{{code}}\n\n文档要求：\n1. 包含接口说明、参数说明、返回值说明\n2. 提供使用示例\n3. 错误码说明\n4. 版本信息',
     variables: [
       {
         name: 'language',
@@ -157,7 +162,8 @@ export const DEFAULT_TEMPLATES = [
     title: '错误调试助手',
     description: '帮助分析和解决编程错误',
     category: 'coding',
-    content: '遇到以下{{language}}错误，请帮我分析原因并提供解决方案：\n\n错误信息：{{errorMessage}}\n相关代码：{{code}}\n运行环境：{{environment}}\n\n请分析：\n1. 错误产生的原因\n2. 可能的解决方案\n3. 预防措施\n4. 相关的最佳实践',
+    content:
+      '遇到以下{{language}}错误，请帮我分析原因并提供解决方案：\n\n错误信息：{{errorMessage}}\n相关代码：{{code}}\n运行环境：{{environment}}\n\n请分析：\n1. 错误产生的原因\n2. 可能的解决方案\n3. 预防措施\n4. 相关的最佳实践',
     variables: [
       {
         name: 'language',
@@ -182,7 +188,8 @@ export const DEFAULT_TEMPLATES = [
     title: '学习计划制定',
     description: '帮助制定个性化的学习计划和时间安排',
     category: 'learning',
-    content: '请帮我制定一个{{subject}}的学习计划：\n\n学习目标：{{goal}}\n当前水平：{{currentLevel}}\n可用时间：{{availableTime}}/天\n学习期限：{{deadline}}\n\n要求：\n1. 分阶段制定学习内容\n2. 包含具体的学习方法\n3. 设置阶段性目标\n4. 提供学习资源建议',
+    content:
+      '请帮我制定一个{{subject}}的学习计划：\n\n学习目标：{{goal}}\n当前水平：{{currentLevel}}\n可用时间：{{availableTime}}/天\n学习期限：{{deadline}}\n\n要求：\n1. 分阶段制定学习内容\n2. 包含具体的学习方法\n3. 设置阶段性目标\n4. 提供学习资源建议',
     variables: [
       { name: 'subject', label: '学习科目', type: 'text' },
       { name: 'goal', label: '学习目标', type: 'text' },
@@ -219,7 +226,8 @@ export const DEFAULT_TEMPLATES = [
     title: '知识点总结',
     description: '帮助整理和总结学习知识点',
     category: 'learning',
-    content: '请帮我总结{{topic}}这个知识点：\n\n核心概念：{{concept}}\n重点内容：{{keyPoints}}\n应用场景：{{application}}\n\n总结要求：\n1. 结构清晰，层次分明\n2. 包含定义、特点、应用\n3. 提供记忆技巧\n4. 举例说明',
+    content:
+      '请帮我总结{{topic}}这个知识点：\n\n核心概念：{{concept}}\n重点内容：{{keyPoints}}\n应用场景：{{application}}\n\n总结要求：\n1. 结构清晰，层次分明\n2. 包含定义、特点、应用\n3. 提供记忆技巧\n4. 举例说明',
     variables: [
       { name: 'topic', label: '知识点主题', type: 'text' },
       { name: 'concept', label: '核心概念', type: 'text' },
@@ -235,7 +243,8 @@ export const DEFAULT_TEMPLATES = [
     title: '市场分析报告',
     description: '生成专业的市场分析报告',
     category: 'business',
-    content: '请帮我分析{{industry}}行业的市场情况：\n\n分析维度：{{dimensions}}\n目标市场：{{targetMarket}}\n竞争对手：{{competitors}}\n时间范围：{{timeRange}}\n\n报告要求：\n1. 市场规模和增长趋势\n2. 竞争格局分析\n3. 用户需求洞察\n4. 机会和挑战分析\n5. 战略建议',
+    content:
+      '请帮我分析{{industry}}行业的市场情况：\n\n分析维度：{{dimensions}}\n目标市场：{{targetMarket}}\n竞争对手：{{competitors}}\n时间范围：{{timeRange}}\n\n报告要求：\n1. 市场规模和增长趋势\n2. 竞争格局分析\n3. 用户需求洞察\n4. 机会和挑战分析\n5. 战略建议',
     variables: [
       { name: 'industry', label: '行业领域', type: 'text' },
       { name: 'dimensions', label: '分析维度', type: 'text' },
@@ -252,7 +261,8 @@ export const DEFAULT_TEMPLATES = [
     title: '产品需求文档',
     description: '生成标准的产品需求文档框架',
     category: 'business',
-    content: '请帮我撰写{{product}}的产品需求文档：\n\n产品概述：{{overview}}\n目标用户：{{targetUsers}}\n核心功能：{{coreFeatures}}\n业务价值：{{businessValue}}\n\n文档结构：\n1. 产品背景和目标\n2. 用户画像和需求分析\n3. 功能规格说明\n4. 非功能性需求\n5. 项目时间规划',
+    content:
+      '请帮我撰写{{product}}的产品需求文档：\n\n产品概述：{{overview}}\n目标用户：{{targetUsers}}\n核心功能：{{coreFeatures}}\n业务价值：{{businessValue}}\n\n文档结构：\n1. 产品背景和目标\n2. 用户画像和需求分析\n3. 功能规格说明\n4. 非功能性需求\n5. 项目时间规划',
     variables: [
       { name: 'product', label: '产品名称', type: 'text' },
       { name: 'overview', label: '产品概述', type: 'text' },

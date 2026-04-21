@@ -10,7 +10,7 @@ export function useImportExport() {
       version: EXPORT_VERSION,
       exportDate: new Date().toISOString(),
       appName: 'WeiPrompt',
-      templates: templates.map(t => ({
+      templates: templates.map((t) => ({
         id: t.id,
         title: t.title,
         description: t.description,
@@ -92,7 +92,7 @@ export function useImportExport() {
             return
           }
 
-          const templates = data.templates.map(t => ({
+          const templates = data.templates.map((t) => ({
             id: t.id || Date.now() + Math.random(),
             title: t.title,
             description: t.description || '',
@@ -106,7 +106,7 @@ export function useImportExport() {
 
           isImporting.value = false
           resolve({ templates, count: templates.length })
-        } catch (err) {
+        } catch {
           isImporting.value = false
           reject(new Error('文件解析失败，请检查文件格式'))
         }
@@ -123,14 +123,14 @@ export function useImportExport() {
 
   const mergeTemplates = (existingTemplates, importedTemplates, mode = 'merge') => {
     if (mode === 'replace') {
-      return importedTemplates.map(t => ({
+      return importedTemplates.map((t) => ({
         ...t,
         id: Date.now() + Math.random()
       }))
     }
 
-    const existingIds = new Set(existingTemplates.map(t => t.id))
-    const existingTitles = new Set(existingTemplates.map(t => t.title))
+    const existingIds = new Set(existingTemplates.map((t) => t.id))
+    const existingTitles = new Set(existingTemplates.map((t) => t.title))
     const result = [...existingTemplates]
 
     for (const t of importedTemplates) {

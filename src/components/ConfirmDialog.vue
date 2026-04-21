@@ -7,8 +7,8 @@
           <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-2">{{ title }}</h3>
           <p class="text-gray-600 dark:text-gray-300 mb-6">{{ message }}</p>
           <div class="flex justify-end space-x-3">
-            <button @click="$emit('cancel')" class="btn-secondary">取消</button>
-            <button @click="$emit('confirm')" class="btn-danger">确认删除</button>
+            <button class="btn-secondary" @click="$emit('cancel')">取消</button>
+            <button class="btn-danger" @click="$emit('confirm')">确认删除</button>
           </div>
         </div>
       </div>

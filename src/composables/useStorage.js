@@ -21,12 +21,13 @@ export function useStorage() {
         return null
       }
 
-      const isValid = parsed.every(item =>
-        item &&
-        typeof item.id === 'number' &&
-        typeof item.title === 'string' &&
-        typeof item.category === 'string' &&
-        typeof item.content === 'string'
+      const isValid = parsed.every(
+        (item) =>
+          item &&
+          typeof item.id === 'number' &&
+          typeof item.title === 'string' &&
+          typeof item.category === 'string' &&
+          typeof item.content === 'string'
       )
 
       if (!isValid) {

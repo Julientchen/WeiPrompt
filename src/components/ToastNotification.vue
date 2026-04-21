@@ -1,10 +1,6 @@
 <template>
   <Transition name="toast">
-    <div
-      v-if="toast.show"
-      class="fixed bottom-4 right-4 px-4 py-2 rounded-lg shadow-lg z-50"
-      :class="toastClass"
-    >
+    <div v-if="toast.show" class="fixed bottom-4 right-4 px-4 py-2 rounded-lg shadow-lg z-50" :class="toastClass">
       <i :class="iconClass" class="mr-2"></i>
       {{ toast.message }}
     </div>

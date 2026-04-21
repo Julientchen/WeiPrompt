@@ -7,13 +7,13 @@
         <button
           v-for="category in categories"
           :key="category.id"
-          @click="$emit('selectCategory', category.id)"
           :class="[
             'w-full text-left px-3 py-2 rounded-lg transition-colors',
             selectedCategory === category.id
               ? 'bg-primary-100 dark:bg-primary-900 text-primary-800 dark:text-primary-200'
               : 'text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
           ]"
+          @click="$emit('selectCategory', category.id)"
         >
           <div class="flex items-center justify-between">
             <div class="flex items-center space-x-3">
