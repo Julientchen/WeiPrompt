@@ -2,13 +2,13 @@
   <header class="bg-white dark:bg-gray-800 shadow-sm border-b border-gray-200 dark:border-gray-700 sticky top-0 z-50">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="flex justify-between items-center h-16">
-        <div class="flex items-center space-x-3">
+        <button @click="$emit('goHome')" class="flex items-center space-x-3 hover:opacity-80 transition-opacity">
           <div class="w-8 h-8 bg-gradient-to-r from-primary-500 to-primary-600 rounded-lg flex items-center justify-center">
             <i class="fas fa-comment-dots text-white text-sm"></i>
           </div>
           <h1 class="text-xl font-bold text-gray-900 dark:text-white">WeiPrompt</h1>
           <span class="text-xs bg-primary-100 dark:bg-primary-900 text-primary-800 dark:text-primary-200 px-2 py-1 rounded-full">Beta</span>
-        </div>
+        </button>
 
         <div class="flex-1 max-w-md mx-8">
           <div class="relative">
@@ -90,7 +90,7 @@ defineProps({
   isDark: Boolean
 })
 
-const emit = defineEmits(['update:searchQuery', 'toggleTheme', 'createNewTemplate', 'export', 'import'])
+const emit = defineEmits(['update:searchQuery', 'toggleTheme', 'createNewTemplate', 'export', 'import', 'goHome'])
 
 const showMenu = ref(false)
 const menuRef = ref(null)

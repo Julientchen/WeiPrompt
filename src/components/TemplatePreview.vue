@@ -1,7 +1,12 @@
 <template>
   <div class="card p-6 mb-8">
     <div class="flex items-center justify-between mb-6">
-      <h2 class="text-xl font-bold text-gray-900 dark:text-white">{{ selectedTemplate.title }}</h2>
+      <div class="flex items-center space-x-3">
+        <button @click="$emit('back')" class="p-2 rounded-lg text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors" title="返回">
+          <i class="fas fa-arrow-left"></i>
+        </button>
+        <h2 class="text-xl font-bold text-gray-900 dark:text-white">{{ selectedTemplate.title }}</h2>
+      </div>
       <div class="flex space-x-3">
         <button @click="$emit('edit', selectedTemplate)" class="btn-secondary">编辑</button>
         <button @click="handleCopy" class="btn-primary">
@@ -56,7 +61,7 @@ const props = defineProps({
   selectedTemplate: Object
 })
 
-const emit = defineEmits(['edit', 'copy'])
+const emit = defineEmits(['edit', 'copy', 'back'])
 
 const variableValues = ref({})
 

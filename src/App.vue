@@ -7,6 +7,7 @@
       @createNewTemplate="createNewTemplate"
       @export="handleExport"
       @import="handleImport"
+      @goHome="goHome"
     />
 
     <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -16,6 +17,7 @@
         @save="saveTemplate"
         @cancel="cancelEdit"
         @delete="confirmDelete"
+        @back="goHome"
       />
 
       <TemplatePreview
@@ -23,6 +25,7 @@
         :selectedTemplate="selectedTemplate"
         @edit="editTemplate"
         @copy="copyToClipboard"
+        @back="goHome"
       />
 
       <div v-else class="grid grid-cols-1 lg:grid-cols-4 gap-8">
@@ -207,6 +210,11 @@ const toggleFavorite = (templateId) => {
     template.isFavorite = !template.isFavorite
     saveToStorage(templates.value)
   }
+}
+
+const goHome = () => {
+  selectedTemplate.value = null
+  editingTemplate.value = null
 }
 
 const copyToClipboard = async (text) => {
