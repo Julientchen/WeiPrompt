@@ -181,7 +181,16 @@ const removeOption = (variable, index) => {
 
 <style scoped>
 .btn-danger {
-  @apply bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg font-medium transition-all duration-200;
+  background-color: #ef4444;
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  font-weight: 500;
+  transition: all 0.2s;
+}
+
+.btn-danger:hover {
+  background-color: #dc2626;
 }
 
 .auto-resize-textarea {
