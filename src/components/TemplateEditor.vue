@@ -78,7 +78,7 @@
             <input v-model="option.value" class="input-field text-sm flex-1" placeholder="选项值" />
             <input v-model="option.label" class="input-field text-sm flex-1" placeholder="显示标签" />
             <button class="text-red-500 hover:text-red-700" @click="removeOption(variable, optIndex)">
-              <i class="fas fa-times"></i>
+              <i class="fas fa-trash"></i>
             </button>
           </div>
           <button class="btn-secondary text-xs" @click="addOption(variable)">添加选项</button>
@@ -93,20 +93,22 @@
     </div>
 
     <div>
-      <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-        模板内容（使用 {{ 变量名 }} 格式插入变量）
+      <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2" v-pre>
+        模板内容（使用 {{变量名}} 格式插入变量）
       </label>
       <textarea
+        ref="contentTextarea"
         v-model="localTemplate.content"
-        class="input-field h-40 font-mono text-sm"
+        class="input-field font-mono text-sm auto-resize-textarea"
         placeholder="请输入模板内容，使用 {{变量名}} 的格式插入变量"
+        @input="autoResize"
       ></textarea>
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref, watch, computed, toRaw } from 'vue'
+import { ref, watch, computed, toRaw, nextTick, onMounted } from 'vue'
 import { CATEGORIES } from '../constants/categories.js'
 
 const props = defineProps({
@@ -116,16 +118,34 @@ const props = defineProps({
 const emit = defineEmits(['save', 'cancel', 'delete', 'back'])
 
 const localTemplate = ref({})
+const contentTextarea = ref(null)
 
 const availableCategories = computed(() => CATEGORIES.filter((c) => c.id !== 'all'))
+
+const autoResize = () => {
+  const textarea = contentTextarea.value
+  if (textarea) {
+    textarea.style.height = 'auto'
+    textarea.style.height = Math.max(textarea.scrollHeight, 160) + 'px'
+  }
+}
 
 watch(
   () => props.editingTemplate,
   (newVal) => {
     localTemplate.value = JSON.parse(JSON.stringify(newVal))
+    nextTick(() => {
+      autoResize()
+    })
   },
   { immediate: true }
 )
+
+onMounted(() => {
+  nextTick(() => {
+    autoResize()
+  })
+})
 
 const handleSave = () => {
   emit('save', toRaw(localTemplate.value))
@@ -162,5 +182,11 @@ const removeOption = (variable, index) => {
 <style scoped>
 .btn-danger {
   @apply bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg font-medium transition-all duration-200;
+}
+
+.auto-resize-textarea {
+  min-height: 160px;
+  transition: height 0.2s ease-in-out;
+  overflow-y: hidden;
 }
 </style>
