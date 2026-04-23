@@ -1,4 +1,5 @@
 import { ref } from 'vue'
+import { generateId } from '../utils/idGenerator.js'
 
 const EXPORT_VERSION = '1.0'
 
@@ -93,7 +94,7 @@ export function useImportExport() {
           }
 
           const templates = data.templates.map((t) => ({
-            id: t.id || Date.now() + Math.random(),
+            id: t.id || generateId(),
             title: t.title,
             description: t.description || '',
             category: t.category || 'writing',
@@ -125,7 +126,7 @@ export function useImportExport() {
     if (mode === 'replace') {
       return importedTemplates.map((t) => ({
         ...t,
-        id: Date.now() + Math.random()
+        id: generateId()
       }))
     }
 
@@ -134,11 +135,14 @@ export function useImportExport() {
     const result = [...existingTemplates]
 
     for (const t of importedTemplates) {
-      if (existingIds.has(t.id) || existingTitles.has(t.title)) {
+      const hasDuplicateId = existingIds.has(t.id)
+      const hasDuplicateTitle = existingTitles.has(t.title)
+
+      if (hasDuplicateId || hasDuplicateTitle) {
         result.push({
           ...t,
-          id: Date.now() + Math.random(),
-          title: t.title + ' (导入)'
+          id: generateId(),
+          title: hasDuplicateTitle ? t.title + ' (导入)' : t.title
         })
       } else {
         result.push(t)

@@ -1,13 +1,12 @@
 import { ref, computed } from 'vue'
 import { defineStore } from 'pinia'
 import { useStorage } from '../composables/useStorage.js'
-import { useToast } from '../composables/useToast.js'
 import { CATEGORIES } from '../constants/categories.js'
 import { DEFAULT_TEMPLATES } from '../constants/defaultTemplates.js'
+import { generateId } from '../utils/idGenerator.js'
 
 export const useTemplateStore = defineStore('template', () => {
   const { save: saveToStorage, load: loadFromStorage } = useStorage()
-  const { showToast } = useToast()
 
   const templates = ref([])
   const selectedTemplate = ref(null)
@@ -64,10 +63,13 @@ export const useTemplateStore = defineStore('template', () => {
   }
 
   function selectTemplate(template) {
-    selectedTemplate.value = template
+    const targetTemplate = templates.value.find((t) => t.id === template.id)
+    if (targetTemplate) {
+      targetTemplate.usageCount = (targetTemplate.usageCount || 0) + 1
+      saveToStorage(templates.value)
+    }
+    selectedTemplate.value = targetTemplate || template
     editingTemplate.value = null
-    template.usageCount = (template.usageCount || 0) + 1
-    saveToStorage(templates.value)
   }
 
   function editTemplate(template) {
@@ -96,17 +98,15 @@ export const useTemplateStore = defineStore('template', () => {
 
   function saveTemplate(template) {
     if (!template.title.trim()) {
-      showToast('请输入模板标题', 'warning')
-      return false
+      return { success: false, message: '请输入模板标题', type: 'warning' }
     }
 
     if (!template.content.trim()) {
-      showToast('请输入模板内容', 'warning')
-      return false
+      return { success: false, message: '请输入模板内容', type: 'warning' }
     }
 
     if (!template.id) {
-      template.id = Date.now()
+      template.id = generateId()
       template.tags = ['自定义']
       templates.value.push(template)
     } else {
@@ -119,8 +119,7 @@ export const useTemplateStore = defineStore('template', () => {
     saveToStorage(templates.value)
     updateCategoryCounts()
     editingTemplate.value = null
-    showToast('模板保存成功')
-    return true
+    return { success: true, message: '模板保存成功', type: 'success' }
   }
 
   function confirmDelete(id) {
@@ -129,19 +128,21 @@ export const useTemplateStore = defineStore('template', () => {
   }
 
   function executeDelete() {
+    let deleted = false
     if (deleteTargetId.value) {
       const index = templates.value.findIndex((t) => t.id === deleteTargetId.value)
       if (index !== -1) {
         templates.value.splice(index, 1)
         saveToStorage(templates.value)
         updateCategoryCounts()
-        showToast('模板已删除')
+        deleted = true
       }
     }
     showDeleteConfirm.value = false
     deleteTargetId.value = null
     editingTemplate.value = null
     selectedTemplate.value = null
+    return deleted
   }
 
   function toggleFavorite(templateId) {

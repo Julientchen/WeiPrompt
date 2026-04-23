@@ -34,6 +34,7 @@
             v-for="tag in popularTags"
             :key="tag"
             class="tag cursor-pointer hover:bg-primary-200 dark:hover:bg-primary-800"
+            @click="$emit('searchTag', tag)"
           >
             {{ tag }}
           </span>
@@ -50,5 +51,5 @@ defineProps({
   popularTags: Array
 })
 
-defineEmits(['selectCategory'])
+defineEmits(['selectCategory', 'searchTag'])
 </script>

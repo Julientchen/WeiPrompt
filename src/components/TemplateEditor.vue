@@ -25,7 +25,7 @@
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
       <div>
         <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">模板标题</label>
-        <input v-model="localTemplate.title" class="input-field" placeholder="输入模板标题" />
+        <input v-model="localTemplate.title" class="input-field" placeholder="输入模板标题" maxlength="100" />
       </div>
       <div>
         <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">分类</label>
@@ -43,6 +43,7 @@
         v-model="localTemplate.description"
         class="input-field h-20"
         placeholder="描述模板的用途和使用场景"
+        maxlength="500"
       ></textarea>
     </div>
 
@@ -56,7 +57,14 @@
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div>
             <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">变量名</label>
-            <input v-model="variable.name" class="input-field text-sm" placeholder="如：topic" />
+            <input
+              v-model="variable.name"
+              class="input-field text-sm"
+              placeholder="如：topic"
+              pattern="[a-zA-Z_][a-zA-Z0-9_]*"
+              title="变量名只能包含字母、数字和下划线，且不能以数字开头"
+              @blur="validateVariableName(variable)"
+            />
           </div>
           <div>
             <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">标签</label>
@@ -93,8 +101,8 @@
     </div>
 
     <div>
-      <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2" v-pre>
-        模板内容（使用 {{变量名}} 格式插入变量）
+      <label v-pre class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+        模板内容（使用 {{ 变量名 }} 格式插入变量）
       </label>
       <textarea
         ref="contentTextarea"
@@ -147,6 +155,15 @@ onMounted(() => {
   })
 })
 
+const validateVariableName = (variable) => {
+  const validName = variable.name.replace(/[^a-zA-Z0-9_]/g, '')
+  if (/^\d/.test(validName)) {
+    variable.name = 'var_' + validName
+  } else {
+    variable.name = validName || 'var_' + Date.now()
+  }
+}
+
 const handleSave = () => {
   emit('save', toRaw(localTemplate.value))
 }
@@ -180,19 +197,6 @@ const removeOption = (variable, index) => {
 </script>
 
 <style scoped>
-.btn-danger {
-  background-color: #ef4444;
-  color: white;
-  padding: 0.5rem 1rem;
-  border-radius: 0.5rem;
-  font-weight: 500;
-  transition: all 0.2s;
-}
-
-.btn-danger:hover {
-  background-color: #dc2626;
-}
-
 .auto-resize-textarea {
   min-height: 160px;
   transition: height 0.2s ease-in-out;

@@ -14,7 +14,7 @@
       <TemplateEditor
         v-if="store.editingTemplate"
         :editingTemplate="store.editingTemplate"
-        @save="store.saveTemplate"
+        @save="handleSave"
         @cancel="store.cancelEdit"
         @delete="store.confirmDelete"
         @back="store.goHome"
@@ -34,6 +34,7 @@
           :selectedCategory="store.selectedCategory"
           :popularTags="popularTags"
           @selectCategory="store.selectCategory"
+          @searchTag="handleSearchTag"
         />
 
         <div class="lg:col-span-3">
@@ -57,11 +58,7 @@
 
     <ToastNotification :toast="toast" />
 
-    <ConfirmDialog
-      :show="store.showDeleteConfirm"
-      @confirm="store.executeDelete"
-      @cancel="store.showDeleteConfirm = false"
-    />
+    <ConfirmDialog :show="store.showDeleteConfirm" @confirm="handleDelete" @cancel="store.showDeleteConfirm = false" />
   </div>
 </template>
 
@@ -118,6 +115,24 @@ const handleImport = async (file) => {
     showToast(`成功导入 ${result.count} 个模板`)
   } catch (err) {
     showToast(err.message, 'error')
+  }
+}
+
+const handleSearchTag = (tag) => {
+  store.searchQuery = tag
+}
+
+const handleSave = (template) => {
+  const result = store.saveTemplate(template)
+  if (result && result.message) {
+    showToast(result.message, result.type)
+  }
+}
+
+const handleDelete = () => {
+  const deleted = store.executeDelete()
+  if (deleted) {
+    showToast('模板已删除')
   }
 }
 
