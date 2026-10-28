@@ -1,8 +1,9 @@
 <template>
   <div class="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors duration-300">
     <HeaderBar
-      v-model:searchQuery="store.searchQuery"
+      :searchQuery="store.searchQuery"
       :isDark="isDark"
+      @update:searchQuery="store.setSearchQuery"
       @toggleTheme="toggleTheme"
       @createNewTemplate="store.createNewTemplate"
       @export="handleExport"
@@ -58,12 +59,12 @@
 
     <ToastNotification :toast="toast" />
 
-    <ConfirmDialog :show="store.showDeleteConfirm" @confirm="handleDelete" @cancel="store.showDeleteConfirm = false" />
+    <ConfirmDialog :show="store.showDeleteConfirm" @confirm="handleDelete" @cancel="store.cancelDelete" />
   </div>
 </template>
 
 <script setup>
-import { onMounted } from 'vue'
+import { onBeforeUnmount, onMounted } from 'vue'
 import { useDark, useToggle } from '@vueuse/core'
 import { useTemplateStore } from './stores/useTemplateStore.js'
 import { useToast } from './composables/useToast.js'
@@ -123,7 +124,7 @@ const handleImport = async (file) => {
 }
 
 const handleSearchTag = (tag) => {
-  store.searchQuery = tag
+  store.setSearchQuery(tag)
 }
 
 const handleSave = (template) => {
@@ -142,7 +143,17 @@ const handleDelete = () => {
   }
 }
 
+const handlePageHide = () => {
+  store.flushUsageSave()
+}
+
 onMounted(() => {
   store.init()
+  window.addEventListener('pagehide', handlePageHide)
+})
+
+onBeforeUnmount(() => {
+  window.removeEventListener('pagehide', handlePageHide)
+  store.flushUsageSave()
 })
 </script>

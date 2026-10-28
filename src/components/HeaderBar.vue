@@ -2,7 +2,11 @@
   <header class="bg-white dark:bg-gray-800 shadow-sm border-b border-gray-200 dark:border-gray-700 sticky top-0 z-50">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="flex justify-between items-center h-16">
-        <button class="flex items-center space-x-3 hover:opacity-80 transition-opacity" @click="$emit('goHome')">
+        <button
+          class="flex items-center space-x-3 hover:opacity-80 transition-opacity"
+          aria-label="返回首页"
+          @click="$emit('goHome')"
+        >
           <div
             class="w-8 h-8 bg-gradient-to-r from-primary-500 to-primary-600 rounded-lg flex items-center justify-center"
           >
@@ -19,11 +23,12 @@
           <div class="relative">
             <i class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
             <input
-              :value="searchQuery"
+              :value="searchInput"
               type="text"
               placeholder="搜索模板..."
+              aria-label="搜索模板"
               class="input-field pl-10 pr-4"
-              @input="$emit('update:searchQuery', $event.target.value)"
+              @input="handleSearchInput"
             />
           </div>
         </div>
@@ -33,6 +38,9 @@
             <button
               class="p-2 rounded-lg bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
               title="导入/导出"
+              aria-label="导入或导出模板"
+              aria-haspopup="true"
+              :aria-expanded="showMenu"
               @click="showMenu = !showMenu"
             >
               <i class="fas fa-ellipsis-v"></i>
@@ -64,6 +72,7 @@
           <button
             class="p-2 rounded-lg bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
             :title="isDark ? '切换到浅色模式' : '切换到深色模式'"
+            :aria-label="isDark ? '切换到浅色模式' : '切换到深色模式'"
             @click="$emit('toggleTheme')"
           >
             <i :class="isDark ? 'fas fa-sun' : 'fas fa-moon'"></i>
@@ -82,9 +91,9 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onUnmounted } from 'vue'
+import { ref, watch, onMounted, onUnmounted } from 'vue'
 
-defineProps({
+const props = defineProps({
   searchQuery: String,
   isDark: Boolean
 })
@@ -94,6 +103,28 @@ const emit = defineEmits(['update:searchQuery', 'toggleTheme', 'createNewTemplat
 const showMenu = ref(false)
 const menuRef = ref(null)
 const fileInputRef = ref(null)
+const searchInput = ref(props.searchQuery || '')
+let searchTimer = null
+
+watch(
+  () => props.searchQuery,
+  (value) => {
+    if ((value || '') !== searchInput.value) {
+      searchInput.value = value || ''
+    }
+  }
+)
+
+const handleSearchInput = (event) => {
+  searchInput.value = event.target.value
+  if (searchTimer) {
+    clearTimeout(searchTimer)
+  }
+  searchTimer = setTimeout(() => {
+    emit('update:searchQuery', searchInput.value)
+    searchTimer = null
+  }, 200)
+}
 
 const handleClickOutside = (e) => {
   if (menuRef.value && !menuRef.value.contains(e.target)) {
@@ -107,6 +138,9 @@ onMounted(() => {
 
 onUnmounted(() => {
   document.removeEventListener('click', handleClickOutside)
+  if (searchTimer) {
+    clearTimeout(searchTimer)
+  }
 })
 
 const handleExport = () => {

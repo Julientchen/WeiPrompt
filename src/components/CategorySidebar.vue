@@ -30,14 +30,16 @@
       <div class="mt-6 pt-4 border-t border-gray-200 dark:border-gray-600">
         <h3 class="text-sm font-medium text-gray-900 dark:text-white mb-3">热门标签</h3>
         <div class="flex flex-wrap gap-2">
-          <span
+          <button
             v-for="tag in popularTags"
             :key="tag"
+            type="button"
             class="tag cursor-pointer hover:bg-primary-200 dark:hover:bg-primary-800"
+            :aria-label="`搜索标签：${tag}`"
             @click="$emit('searchTag', tag)"
           >
             {{ tag }}
-          </span>
+          </button>
         </div>
       </div>
     </div>

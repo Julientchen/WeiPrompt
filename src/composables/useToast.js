@@ -21,13 +21,5 @@ export function useToast() {
     }, 2000)
   }
 
-  const clearToast = () => {
-    if (timer) {
-      clearTimeout(timer)
-      timer = null
-    }
-    toast.value.show = false
-  }
-
-  return { toast, showToast, clearToast }
+  return { toast, showToast }
 }

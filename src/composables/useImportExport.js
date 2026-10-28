@@ -1,11 +1,8 @@
-import { ref } from 'vue'
 import { generateId } from '../utils/idGenerator.js'
 
 const EXPORT_VERSION = '1.0'
 
 export function useImportExport() {
-  const isImporting = ref(false)
-
   const normalizeVariables = (variables) => {
     if (!Array.isArray(variables)) return []
     return variables
@@ -97,8 +94,6 @@ export function useImportExport() {
         return
       }
 
-      isImporting.value = true
-
       const reader = new FileReader()
 
       reader.onload = (e) => {
@@ -107,7 +102,6 @@ export function useImportExport() {
           const validation = validateImportData(data)
 
           if (!validation.valid) {
-            isImporting.value = false
             reject(new Error(validation.error))
             return
           }
@@ -124,16 +118,13 @@ export function useImportExport() {
             isFavorite: !!t.isFavorite
           }))
 
-          isImporting.value = false
           resolve({ templates, count: templates.length })
         } catch {
-          isImporting.value = false
           reject(new Error('文件解析失败，请检查文件格式'))
         }
       }
 
       reader.onerror = () => {
-        isImporting.value = false
         reject(new Error('文件读取失败'))
       }
 
@@ -172,7 +163,6 @@ export function useImportExport() {
   }
 
   return {
-    isImporting,
     exportTemplates,
     importTemplates,
     mergeTemplates

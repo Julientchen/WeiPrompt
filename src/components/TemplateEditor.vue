@@ -5,6 +5,7 @@
         <button
           class="p-2 rounded-lg text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
           title="返回"
+          aria-label="返回"
           @click="$emit('back')"
         >
           <i class="fas fa-arrow-left"></i>
@@ -63,6 +64,7 @@
               placeholder="如：topic"
               pattern="[a-zA-Z_][a-zA-Z0-9_]*"
               title="变量名只能包含字母、数字和下划线，且不能以数字开头"
+              @focus="rememberVariableName(variable)"
               @blur="validateVariableName(variable)"
             />
           </div>
@@ -85,7 +87,11 @@
           <div v-for="(option, optIndex) in variable.options" :key="optIndex" class="flex items-center space-x-2 mb-2">
             <input v-model="option.value" class="input-field text-sm flex-1" placeholder="选项值" />
             <input v-model="option.label" class="input-field text-sm flex-1" placeholder="显示标签" />
-            <button class="text-red-500 hover:text-red-700" @click="removeOption(variable, optIndex)">
+            <button
+              class="text-red-500 hover:text-red-700"
+              aria-label="删除选项"
+              @click="removeOption(variable, optIndex)"
+            >
               <i class="fas fa-trash"></i>
             </button>
           </div>
@@ -101,10 +107,11 @@
     </div>
 
     <div>
-      <label v-pre class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+      <label v-pre for="template-content" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
         模板内容（使用 {{ 变量名 }} 格式插入变量）
       </label>
       <textarea
+        id="template-content"
         ref="contentTextarea"
         v-model="localTemplate.content"
         class="input-field font-mono text-sm auto-resize-textarea"
@@ -127,6 +134,7 @@ const emit = defineEmits(['save', 'cancel', 'delete', 'back'])
 
 const localTemplate = ref({})
 const contentTextarea = ref(null)
+const variableNames = new WeakMap()
 
 const availableCategories = computed(() => CATEGORIES.filter((c) => c.id !== 'all'))
 
@@ -155,13 +163,28 @@ onMounted(() => {
   })
 })
 
+const escapeRegExp = (value) => value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+
+const rememberVariableName = (variable) => {
+  variableNames.set(variable, variable.name)
+}
+
 const validateVariableName = (variable) => {
+  const oldName = variableNames.get(variable) || ''
   const validName = variable.name.replace(/[^a-zA-Z0-9_]/g, '')
   if (/^\d/.test(validName)) {
     variable.name = 'var_' + validName
   } else {
     variable.name = validName || 'var_' + Date.now()
   }
+
+  if (oldName && oldName !== variable.name) {
+    const regex = new RegExp(`\\{\\{\\s*${escapeRegExp(oldName)}\\s*\\}\\}`, 'g')
+    const content = localTemplate.value.content || ''
+    localTemplate.value.content = content.replace(regex, () => `{{${variable.name}}}`)
+  }
+
+  variableNames.delete(variable)
 }
 
 const handleSave = () => {

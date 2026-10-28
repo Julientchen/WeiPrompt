@@ -17,6 +17,37 @@ export const useTemplateStore = defineStore('template', () => {
   const showDeleteConfirm = ref(false)
   const deleteTargetId = ref(null)
 
+  let pendingUsageSave = null
+
+  function cancelPendingUsageSave() {
+    if (pendingUsageSave) {
+      clearTimeout(pendingUsageSave)
+      pendingUsageSave = null
+    }
+  }
+
+  function persistTemplates() {
+    cancelPendingUsageSave()
+    return saveToStorage(templates.value)
+  }
+
+  function scheduleUsageSave() {
+    cancelPendingUsageSave()
+    pendingUsageSave = setTimeout(() => {
+      pendingUsageSave = null
+      const result = saveToStorage(templates.value)
+      if (!result.success) {
+        console.warn(result.error)
+      }
+    }, 500)
+  }
+
+  function flushUsageSave() {
+    if (!pendingUsageSave) return
+    cancelPendingUsageSave()
+    saveToStorage(templates.value)
+  }
+
   const filteredTemplates = computed(() => {
     let filtered = templates.value
 
@@ -69,10 +100,7 @@ export const useTemplateStore = defineStore('template', () => {
     const targetTemplate = templates.value.find((t) => t.id === template.id)
     if (targetTemplate) {
       targetTemplate.usageCount = (targetTemplate.usageCount || 0) + 1
-      const result = saveToStorage(templates.value)
-      if (!result.success) {
-        targetTemplate.usageCount -= 1
-      }
+      scheduleUsageSave()
     }
     selectedTemplate.value = targetTemplate || template
     editingTemplate.value = null
@@ -125,7 +153,7 @@ export const useTemplateStore = defineStore('template', () => {
       }
     }
 
-    const result = saveToStorage(templates.value)
+    const result = persistTemplates()
     if (!result.success) {
       if (snapshot) {
         const index = templates.value.findIndex((t) => t.id === snapshot.id)
@@ -155,7 +183,7 @@ export const useTemplateStore = defineStore('template', () => {
       const index = templates.value.findIndex((t) => t.id === deleteTargetId.value)
       if (index !== -1) {
         const [removed] = templates.value.splice(index, 1)
-        const result = saveToStorage(templates.value)
+        const result = persistTemplates()
         if (result.success) {
           updateCategoryCounts()
         } else {
@@ -174,11 +202,16 @@ export const useTemplateStore = defineStore('template', () => {
     return { success, error }
   }
 
+  function cancelDelete() {
+    showDeleteConfirm.value = false
+    deleteTargetId.value = null
+  }
+
   function toggleFavorite(templateId) {
     const template = templates.value.find((t) => t.id === templateId)
     if (template) {
       template.isFavorite = !template.isFavorite
-      const result = saveToStorage(templates.value)
+      const result = persistTemplates()
       if (!result.success) {
         template.isFavorite = !template.isFavorite
       }
@@ -197,7 +230,7 @@ export const useTemplateStore = defineStore('template', () => {
   function setTemplates(newTemplates) {
     const previous = templates.value
     templates.value = newTemplates
-    const result = saveToStorage(templates.value)
+    const result = persistTemplates()
     if (!result.success) {
       templates.value = previous
       return result
@@ -225,10 +258,12 @@ export const useTemplateStore = defineStore('template', () => {
     saveTemplate,
     confirmDelete,
     executeDelete,
+    cancelDelete,
     toggleFavorite,
     goHome,
     setSearchQuery,
     setTemplates,
-    updateCategoryCounts
+    updateCategoryCounts,
+    flushUsageSave
   }
 })

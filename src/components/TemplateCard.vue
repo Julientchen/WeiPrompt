@@ -1,12 +1,24 @@
 <template>
-  <div class="card p-6 cursor-pointer hover:shadow-lg transition-all duration-300" @click="$emit('select', template)">
+  <div
+    class="card p-6 cursor-pointer hover:shadow-lg transition-all duration-300"
+    role="button"
+    tabindex="0"
+    :aria-label="`打开模板：${template.title}`"
+    @click="$emit('select', template)"
+    @keydown.enter="$emit('select', template)"
+    @keydown.space.prevent="$emit('select', template)"
+  >
     <div class="flex items-start justify-between mb-3">
       <h3 class="font-semibold text-gray-900 dark:text-white text-balance">
         {{ template.title }}
       </h3>
       <button
         class="text-gray-400 hover:text-yellow-500 transition-colors"
+        :aria-label="template.isFavorite ? '取消收藏' : '收藏模板'"
+        :aria-pressed="template.isFavorite"
         @click.stop="$emit('toggleFavorite', template.id)"
+        @keydown.enter.stop
+        @keydown.space.stop
       >
         <i :class="template.isFavorite ? 'fas fa-star text-yellow-500' : 'far fa-star'"></i>
       </button>
@@ -18,10 +30,12 @@
 
     <div class="flex items-center justify-between">
       <div class="flex flex-wrap gap-1">
-        <span v-for="tag in template.tags.slice(0, 2)" :key="tag" class="tag text-xs">
+        <span v-for="tag in (template.tags || []).slice(0, 2)" :key="tag" class="tag text-xs">
           {{ tag }}
         </span>
-        <span v-if="template.tags.length > 2" class="tag text-xs"> +{{ template.tags.length - 2 }} </span>
+        <span v-if="(template.tags || []).length > 2" class="tag text-xs">
+          +{{ (template.tags || []).length - 2 }}
+        </span>
       </div>
       <span class="text-xs text-gray-500 dark:text-gray-400"> {{ template.usageCount }} 次使用 </span>
     </div>
