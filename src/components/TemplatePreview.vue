@@ -63,6 +63,8 @@ const emit = defineEmits(['edit', 'copy', 'back'])
 
 const variableValues = ref({})
 
+const escapeRegExp = (value) => value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+
 const generatedPrompt = computed(() => {
   if (!props.selectedTemplate || !props.selectedTemplate.content) return ''
 
@@ -70,8 +72,8 @@ const generatedPrompt = computed(() => {
 
   Object.keys(variableValues.value).forEach((key) => {
     const value = variableValues.value[key] || ''
-    const regex = new RegExp(`{{${key}}}`, 'g')
-    prompt = prompt.replace(regex, value)
+    const regex = new RegExp(`\\{\\{\\s*${escapeRegExp(key)}\\s*\\}\\}`, 'g')
+    prompt = prompt.replace(regex, () => value)
   })
 
   return prompt

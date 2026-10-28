@@ -1,31 +1,50 @@
 const STORAGE_KEY = 'weiprompt-templates'
 const STORAGE_KEY_BACKUP = 'weiprompt-user-data'
-const DATA_VERSION = 1
+const DATA_VERSION = 2
 
 export function useStorage() {
-  const validateTemplates = (templates) => {
-    if (!Array.isArray(templates)) return false
-    return templates.every(
-      (item) =>
-        item &&
-        (typeof item.id === 'number' || typeof item.id === 'string') &&
-        typeof item.title === 'string' &&
-        typeof item.category === 'string' &&
-        typeof item.content === 'string'
-    )
+  const isValidTemplate = (template) =>
+    template &&
+    (typeof template.id === 'number' || typeof template.id === 'string') &&
+    typeof template.title === 'string' &&
+    template.title.trim() !== ''
+
+  const normalizeTemplate = (template) => ({
+    ...template,
+    description: typeof template.description === 'string' ? template.description : '',
+    category: typeof template.category === 'string' && template.category ? template.category : 'writing',
+    content: typeof template.content === 'string' ? template.content : '',
+    variables: Array.isArray(template.variables)
+      ? template.variables.filter((variable) => variable && typeof variable.name === 'string')
+      : [],
+    tags: Array.isArray(template.tags) ? template.tags.filter((tag) => typeof tag === 'string') : [],
+    usageCount: Number.isFinite(template.usageCount) ? template.usageCount : 0,
+    isFavorite: Boolean(template.isFavorite)
+  })
+
+  const normalizeTemplates = (templates) => {
+    if (!Array.isArray(templates)) return null
+    if (templates.length === 0) return []
+    const normalized = templates.filter(isValidTemplate).map(normalizeTemplate)
+    return normalized.length > 0 ? normalized : null
   }
 
   const parseTemplates = (parsed) => {
-    if (parsed && typeof parsed === 'object' && 'version' in parsed && Array.isArray(parsed.data)) {
-      return parsed.data
-    } else if (Array.isArray(parsed)) {
-      return parsed
+    if (Array.isArray(parsed)) {
+      return { templates: parsed, version: 0 }
+    }
+    if (parsed && typeof parsed === 'object' && Array.isArray(parsed.data)) {
+      return { templates: parsed.data, version: Number(parsed.version) || 0 }
     }
     return null
   }
 
   const save = (data) => {
     try {
+      if (!Array.isArray(data)) {
+        return { success: false, error: '数据格式无效' }
+      }
+
       const payload = {
         version: DATA_VERSION,
         timestamp: Date.now(),
@@ -34,7 +53,12 @@ export function useStorage() {
       const serialized = JSON.stringify(payload)
 
       localStorage.setItem(STORAGE_KEY, serialized)
-      localStorage.setItem(STORAGE_KEY_BACKUP, serialized)
+
+      try {
+        localStorage.setItem(STORAGE_KEY_BACKUP, serialized)
+      } catch (e) {
+        console.warn('备份写入失败:', e)
+      }
 
       return { success: true }
     } catch (e) {
@@ -54,14 +78,24 @@ export function useStorage() {
       for (let i = 0; i < sources.length; i++) {
         try {
           const parsed = JSON.parse(sources[i])
-          const templates = parseTemplates(parsed)
-          if (templates && validateTemplates(templates)) {
-            if (i > 0) {
-              console.log('✅ 数据已自动从备份恢复')
+          const result = parseTemplates(parsed)
+          const templates = result ? normalizeTemplates(result.templates) : null
+          if (!templates) continue
+
+          if (i > 0) {
+            console.log('✅ 数据已自动从备份恢复')
+            try {
               localStorage.setItem(STORAGE_KEY, sources[i])
+            } catch (e) {
+              console.warn('备份数据回写失败:', e)
             }
-            return templates
           }
+
+          if (result.version < DATA_VERSION) {
+            save(templates)
+          }
+
+          return templates
         } catch (e) {
           console.debug('数据解析失败，尝试下一个数据源:', e)
         }

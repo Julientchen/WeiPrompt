@@ -8,7 +8,7 @@ export default [
   ...vue.configs['flat/recommended'],
   prettier,
   {
-    files: ['**/*.{js,vue}'],
+    files: ['**/*.{js,cjs,vue}'],
     languageOptions: {
       ecmaVersion: 'latest',
       sourceType: 'module',

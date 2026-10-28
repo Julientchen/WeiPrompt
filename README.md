@@ -4,8 +4,8 @@
 
 ✨ 智能提示词生成与管理工具
 
-[![Vue](https://img.shields.io/badge/Vue-3.3.4-brightgreen.svg)](https://vuejs.org/)
-[![Vite](https://img.shields.io/badge/Vite-4.4.5-blue.svg)](https://vitejs.dev/)
+[![Vue](https://img.shields.io/badge/Vue-3.5.11-brightgreen.svg)](https://vuejs.org/)
+[![Vite](https://img.shields.io/badge/Vite-7.0.0-blue.svg)](https://vitejs.dev/)
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind-3.3.0-cyan.svg)](https://tailwindcss.com/)
 [![Pinia](https://img.shields.io/badge/Pinia-3.0.4-yellow.svg)](https://pinia.vuejs.org/)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
@@ -48,8 +48,8 @@ WeiPrompt 是一款轻量级、高效的个人提示词模板管理工具，专�
 
 ### 环境要求
 
-- Node.js >= 16.0.0
-- npm >= 8.0.0
+- Node.js >= 20.19.0（推荐 22 LTS / 24 LTS，不支持 Node 23）
+- npm >= 10.0.0
 
 ### 安装与运行
 
@@ -71,7 +71,7 @@ npm run build
 npm run preview
 ```
 
-访问 `http://localhost:5173` 即可开始使用。
+访问 `http://localhost:3000` 即可开始使用。
 
 ## 📖 使用指南
 
@@ -110,8 +110,8 @@ npm run preview
 
 | 层级 | 技术选型 |
 |------|----------|
-| 前端框架 | Vue 3.3.4 + Composition API |
-| 构建工具 | Vite 4.4.5 |
+| 前端框架 | Vue 3.5.11 + Composition API |
+| 构建工具 | Vite 7.0.0 |
 | 样式框架 | Tailwind CSS 3.3.0 |
 | 状态管理 | Pinia 3.0.4 |
 | 工具库 | @vueuse/core 10.1.2 |

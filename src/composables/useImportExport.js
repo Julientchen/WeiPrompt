@@ -6,6 +6,25 @@ const EXPORT_VERSION = '1.0'
 export function useImportExport() {
   const isImporting = ref(false)
 
+  const normalizeVariables = (variables) => {
+    if (!Array.isArray(variables)) return []
+    return variables
+      .filter((variable) => variable && typeof variable.name === 'string' && variable.name.trim())
+      .map((variable) => ({
+        name: variable.name,
+        label: typeof variable.label === 'string' ? variable.label : '',
+        type: ['text', 'select', 'number'].includes(variable.type) ? variable.type : 'text',
+        options: Array.isArray(variable.options)
+          ? variable.options
+              .filter((option) => option && typeof option.value === 'string')
+              .map((option) => ({
+                value: option.value,
+                label: typeof option.label === 'string' ? option.label : option.value
+              }))
+          : []
+      }))
+  }
+
   const exportTemplates = (templates) => {
     const data = {
       version: EXPORT_VERSION,
@@ -96,12 +115,12 @@ export function useImportExport() {
           const templates = data.templates.map((t) => ({
             id: t.id || generateId(),
             title: t.title,
-            description: t.description || '',
-            category: t.category || 'writing',
+            description: typeof t.description === 'string' ? t.description : '',
+            category: typeof t.category === 'string' && t.category ? t.category : 'writing',
             content: t.content,
-            variables: Array.isArray(t.variables) ? t.variables : [],
-            tags: Array.isArray(t.tags) ? t.tags : [],
-            usageCount: typeof t.usageCount === 'number' ? t.usageCount : 0,
+            variables: normalizeVariables(t.variables),
+            tags: Array.isArray(t.tags) ? t.tags.filter((tag) => typeof tag === 'string') : [],
+            usageCount: Number.isFinite(t.usageCount) ? t.usageCount : 0,
             isFavorite: !!t.isFavorite
           }))
 

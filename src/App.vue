@@ -111,7 +111,11 @@ const handleImport = async (file) => {
   try {
     const result = await importTemplates(file)
     const merged = mergeTemplates(store.templates, result.templates, 'merge')
-    store.setTemplates(merged)
+    const saveResult = store.setTemplates(merged)
+    if (!saveResult.success) {
+      showToast(saveResult.error || '导入失败', 'error')
+      return
+    }
     showToast(`成功导入 ${result.count} 个模板`)
   } catch (err) {
     showToast(err.message, 'error')
@@ -130,9 +134,11 @@ const handleSave = (template) => {
 }
 
 const handleDelete = () => {
-  const deleted = store.executeDelete()
-  if (deleted) {
+  const result = store.executeDelete()
+  if (result.success) {
     showToast('模板已删除')
+  } else if (result.error) {
+    showToast(result.error, 'error')
   }
 }
 
